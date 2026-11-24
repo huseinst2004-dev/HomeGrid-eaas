@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>لوحة مشغل HomeGrid</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #1D4ED8;outline-offset:2px}
+</style>
+</helmet>
+<div dir="rtl" style="font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; background: #F6F5F1; color: #1B1F23; min-height: 900px; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 26px; font-weight: 700">لوحة المشتركين</h1>
+<span style="font-size: 14px; color: #4B5563">بيانات تجريبية · 14 وحدة من أصل 350 في الانتشار الأولي</span>
+</div>
+<span style="font-size: 13px; color: #374151; background: #E9E6DD; padding: 8px 12px; border-radius: 8px">تحديث القياسات كل 60 ثانية</span>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px" role="group" aria-label="تصفية حسب الحالة">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="6">
+<button onClick="{{ c.pick }}" aria-pressed="{{ c.on }}" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 22px; font-size: 14px; font-weight: 600; border: 2px solid {{c.border}}; background: {{c.bg}}; color: #1B1F23">
+<span style="width: 10px; height: 10px; border-radius: 50%; background: {{c.dot}}"></span>
+<span>{{c.label}}</span>
+<span style="font-weight: 700">{{c.count}}</span>
+</button>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+
+<div style="flex: 999 1 640px; min-width: 0; overflow-x: auto; background: #FFFFFF; border-radius: 14px; border: 1px solid #E2DFD6">
+<div style="min-width: 700px">
+<div style="display: grid; grid-template-columns: 1fr 1.3fr 0.7fr 1.3fr 0.8fr 1.2fr; gap: 12px; padding: 12px 18px; font-size: 13px; font-weight: 600; color: #4B5563; border-bottom: 1px solid #E2DFD6">
+<span>الوحدة</span><span>الموقع</span><span>الباقة</span><span>الشحنة</span><span>الحمل</span><span>الحالة</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+<button onClick="{{ r.pick }}" aria-pressed="{{ r.sel }}" style="display: grid; grid-template-columns: 1fr 1.3fr 0.7fr 1.3fr 0.8fr 1.2fr; gap: 12px; align-items: center; width: 100%; min-height: 56px; padding: 8px 18px; text-align: start; border: 0; border-bottom: 1px solid #EEECE5; background: {{r.rowBg}}; color: #1B1F23; font-size: 14px; box-sizing: border-box">
+<span style="font-weight: 600; direction: ltr; text-align: right">{{r.serial}}</span>
+<span>{{r.place}}</span>
+<span>{{r.plan}}</span>
+<span style="display: flex; align-items: center; gap: 8px">
+<span style="flex: 1; height: 8px; border-radius: 4px; background: #E5E7EB; overflow: hidden"><span style="display: block; height: 100%; width: {{r.socW}}; background: {{r.socColor}}"></span></span>
+<span style="min-width: 36px; font-variant-numeric: tabular-nums">{{r.soc}}%</span>
+</span>
+<span style="font-variant-numeric: tabular-nums">{{r.kw}}</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 5px 10px; border-radius: 14px; font-size: 13px; font-weight: 600; background: {{r.chipBg}}; color: {{r.chipFg}}">
+<span style="width: 8px; height: 8px; border-radius: 50%; background: {{r.dot}}"></span>{{r.label}}
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="flex: 1 1 340px; min-width: 0; background: #FFFFFF; border-radius: 14px; border: 1px solid #E2DFD6; padding: 22px; display: flex; flex-direction: column; gap: 16px; box-sizing: border-box">
+<sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700; direction: ltr">{{sel.serial}}</h2>
+<span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 14px; font-size: 13px; font-weight: 600; background: {{sel.chipBg}}; color: {{sel.chipFg}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{sel.dot}}"></span>{{sel.label}}</span>
+</div>
+<div style="font-size: 14px; color: #4B5563">{{sel.place}} · باقة {{sel.plan}}</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="background: #F6F5F1; border-radius: 10px; padding: 12px"><div style="font-size: 12px; color: #4B5563">الشحنة</div><div style="font-size: 22px; font-weight: 700">{{sel.soc}}%</div></div>
+<div style="background: #F6F5F1; border-radius: 10px; padding: 12px"><div style="font-size: 12px; color: #4B5563">الحمل الآن</div><div style="font-size: 22px; font-weight: 700">{{sel.kw}}</div></div>
+<div style="background: #F6F5F1; border-radius: 10px; padding: 12px"><div style="font-size: 12px; color: #4B5563">حرارة البطارية</div><div style="font-size: 22px; font-weight: 700">{{sel.temp}}°م</div></div>
+<div style="background: #F6F5F1; border-radius: 10px; padding: 12px"><div style="font-size: 12px; color: #4B5563">المتبقي من الاشتراك</div><div style="font-size: 22px; font-weight: 700">{{sel.days}}</div></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 15px; font-weight: 700">إرسال أمر (موقّع)</h3>
+<sc-for list="{{actions}}" as="a" hint-placeholder-count="2">
+<button onClick="{{ a.run }}" style="min-height: 46px; border-radius: 10px; font-size: 15px; font-weight: 600; border: 2px solid #1B1F23; background: {{a.bg}}; color: {{a.fg}}">{{a.label}}</button>
+</sc-for>
+<div role="status" aria-live="polite" style="min-height: 20px; font-size: 13px; color: #14532D">{{msg}}</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 15px; font-weight: 700">آخر الأحداث</h3>
+<sc-for list="{{events}}" as="e" hint-placeholder-count="3">
+<div style="display: flex; gap: 10px; font-size: 13px; line-height: 1.6; padding: 8px 0; border-top: 1px solid #EEECE5"><span style="flex: none; width: 64px; color: #4B5563">{{e.t}}</span><span>{{e.x}}</span></div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ noSel }}" hint-placeholder-val="{{ false }}">
+<div style="font-size: 15px; color: #4B5563">اختر وحدة من الجدول لعرض تفاصيلها.</div>
+</sc-if>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { filter: 'all', selId: 5, ovr: {}, msg: '' };
+  }
+  renderVals() {
+    const RED = { dot: '#D64033', bg: '#FADBD8', fg: '#7F1D1D' };
+    const S = {
+      ACTIVE: { l: 'فعّال', dot: '#1E9E5A', bg: '#DDF1E4', fg: '#14532D' },
+      EXPIRING: { l: 'قارب الانتهاء', dot: '#E08A00', bg: '#FDE9CF', fg: '#7A3E00' },
+      SUSPENDED: Object.assign({ l: 'موقوف' }, RED),
+      FAULT: Object.assign({ l: 'عطل' }, RED),
+      TAMPER: Object.assign({ l: 'اشتباه عبث' }, RED),
+      OFFLINE: { l: 'غير متصل', dot: '#6B7280', bg: '#E5E7EB', fg: '#374151' },
+      FROZEN: { l: 'مجمّد', dot: '#3B82F6', bg: '#DBEAFE', fg: '#1E3A8A' }
+    };
+    const base = [
+      [1, 'HG-0101', 'بلوك 1 · دار 4', 8, 'ACTIVE', 81, 1.2, 22, 33],
+      [2, 'HG-0102', 'بلوك 1 · دار 9', 6, 'ACTIVE', 64, 0.9, 17, 34],
+      [3, 'HG-0117', 'بلوك 2 · دار 2', 10, 'EXPIRING', 47, 1.9, 2, 36],
+      [4, 'HG-0123', 'بلوك 2 · دار 15', 8, 'ACTIVE', 90, 1.1, 28, 32],
+      [5, 'HG-0131', 'بلوك 3 · دار 7', 10, 'TAMPER', 58, 0.4, 11, 41],
+      [6, 'HG-0140', 'بلوك 3 · دار 12', 6, 'SUSPENDED', 73, 0.0, 0, 33],
+      [7, 'HG-0152', 'بلوك 4 · دار 1', 8, 'OFFLINE', 55, 0.0, 9, 0],
+      [8, 'HG-0158', 'بلوك 4 · دار 6', 8, 'FROZEN', 96, 0.0, 14, 31],
+      [9, 'HG-0163', 'بلوك 4 · دار 20', 10, 'ACTIVE', 38, 2.1, 6, 37],
+      [10, 'HG-0170', 'بلوك 5 · دار 3', 6, 'EXPIRING', 52, 0.8, 1, 35],
+      [11, 'HG-0174', 'بلوك 5 · دار 11', 8, 'FAULT', 70, 0.0, 19, 39],
+      [12, 'HG-0189', 'بلوك 6 · دار 5', 8, 'ACTIVE', 77, 1.4, 25, 33],
+      [13, 'HG-0192', 'بلوك 6 · دار 8', 6, 'ACTIVE', 62, 0.7, 12, 34],
+      [14, 'HG-0205', 'بلوك 7 · دار 14', 10, 'ACTIVE', 85, 1.6, 20, 35]
+    ];
+    const ovr = this.state.ovr;
+    const grp = (s) => (s === 'SUSPENDED' || s === 'FAULT' || s === 'TAMPER') ? 'RED' : s;
+    const items = base.map((b) => {
+      const st = ovr[b[0]] || b[4];
+      const m = S[st];
+      const off = st === 'OFFLINE';
+      const zero = st === 'SUSPENDED' || st === 'FAULT' || st === 'FROZEN' || off;
+      const soc = b[5];
+      return {
+        id: b[0], serial: b[1], place: b[2], plan: b[3] + ' A', st, g: grp(st),
+        soc, socW: soc + '%', socColor: soc < 20 ? '#D64033' : (soc < 40 ? '#E08A00' : '#1E9E5A'),
+        kw: zero ? '—' : b[6].toFixed(1) + ' kW',
+        days: st === 'SUSPENDED' ? 'منتهٍ' : b[7] + ' يوم',
+        temp: off ? '—' : b[8],
+        label: m.l, dot: m.dot, chipBg: m.bg, chipFg: m.fg,
+        sel: this.state.selId === b[0],
+        rowBg: this.state.selId === b[0] ? '#EEF3FF' : '#FFFFFF',
+        pick: () => this.setState({ selId: b[0], msg: '' })
+      };
+    });
+    const f = this.state.filter;
+    const rows = items.filter((i) => f === 'all' || i.g === f);
+    const mk = (key, label, dot) => {
+      const count = key === 'all' ? items.length : items.filter((i) => i.g === key).length;
+      const on = f === key;
+      return { key, label, dot, count, on, bg: on ? '#E8EEFF' : '#FFFFFF', border: on ? '#1D4ED8' : '#D6D3C8', pick: () => this.setState({ filter: key }) };
+    };
+    const chips = [
+      mk('all', 'الكل', '#1B1F23'), mk('ACTIVE', 'فعّال', '#1E9E5A'), mk('EXPIRING', 'قارب الانتهاء', '#E08A00'),
+      mk('RED', 'موقوف / عطل / عبث', '#D64033'), mk('OFFLINE', 'غير متصل', '#6B7280'), mk('FROZEN', 'مجمّد', '#3B82F6')
+    ];
+    const sel = items.find((i) => i.id === this.state.selId) || null;
+    let actions = [];
+    let events = [];
+    if (sel) {
+      const send = (label, next) => () => this.setState({
+        ovr: Object.assign({}, ovr, { [sel.id]: next }),
+        msg: 'أُرسل أمر موقّع إلى ' + sel.serial + ': ' + label
+      });
+      const dark = { bg: '#1B1F23', fg: '#FFFFFF' };
+      const light = { bg: '#FFFFFF', fg: '#1B1F23' };
+      const A = (label, next, style) => Object.assign({ label, run: send(label, next) }, style);
+      if (sel.st === 'ACTIVE' || sel.st === 'EXPIRING') actions = [A('قطع الخرج', 'SUSPENDED', light), A('تجميد الاشتراك', 'FROZEN', light)];
+      else if (sel.st === 'SUSPENDED') actions = [A('وصل (تفعيل يدوي)', 'ACTIVE', dark)];
+      else if (sel.st === 'TAMPER') actions = [A('تم الفحص الفني — إعادة التفعيل', 'ACTIVE', dark)];
+      else if (sel.st === 'FAULT') actions = [A('تم الإصلاح — إعادة التفعيل', 'ACTIVE', dark)];
+      else if (sel.st === 'FROZEN') actions = [A('إنهاء التجميد', 'ACTIVE', dark)];
+      const E = {
+        TAMPER: [{ t: 'قبل 12 د', x: 'فرق تيار 6.2 A بين الإنفيرتر والـBMS لأكثر من 60 ث' }, { t: 'قبل 12 د', x: 'حدث TAMPER — بانتظار فحص فني' }],
+        FAULT: [{ t: 'قبل ساعة', x: 'فقد الاتصال بالـBMS — قطع شحن وتفريغ محمي' }, { t: 'قبل ساعة', x: 'إشعار عطل أُرسل للفني' }],
+        SUSPENDED: [{ t: 'اليوم', x: 'انتهى الاشتراك وحلّت ساعة القطع' }, { t: 'أمس', x: 'تنبيه صباح الانتهاء أُرسل' }],
+        OFFLINE: [{ t: 'قبل 3 أيام', x: 'آخر اتصال بالخادم — يعمل برمز الصلاحية الحالي' }],
+        FROZEN: [{ t: 'قبل 5 أيام', x: 'بدأ التجميد بطلب من المشترك' }],
+        EXPIRING: [{ t: 'اليوم', x: 'تنبيه قرب الانتهاء أُرسل (Push)' }, { t: 'أمس', x: 'قطع حمل زائد: 13.1 A لمدة 3 ث' }],
+        ACTIVE: [{ t: 'قبل 3 س', x: 'رمز صلاحية جديد — تأكيد من الجهاز' }, { t: 'أمس', x: 'بلغت الشحنة 40% — تنبيه «قلل الاستهلاك»' }]
+      };
+      events = E[sel.st];
+    }
+    return { chips, rows, sel: sel || {}, hasSel: !!sel, noSel: !sel, actions, events, msg: this.state.msg };
+  }
+}
+</script>
+</body>
+</html>

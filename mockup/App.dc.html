@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>تطبيق مشترك HomeGrid</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #1D4ED8;outline-offset:2px}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; background: #F6F5F1; color: #1B1F23; padding: 28px 22px 22px; display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 20px; font-weight: 700">HomeGrid</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 14px; font-size: 13px; font-weight: 600; background: {{st.bg}}; color: {{st.fg}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{st.dot}}"></span>{{st.label}}</span>
+</div>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ lowSoc }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background: #FDE9CF; color: #7A3E00; border-radius: 12px; padding: 12px 14px; font-size: 14px; font-weight: 600; line-height: 1.6">الشحنة منخفضة ({{socText}}). قلّل الاستهلاك لتجنّب القطع المحمي عند 10%.</div>
+</sc-if>
+
+<div style="background: #FFFFFF; border: 1px solid #E2DFD6; border-radius: 18px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+<div style="position: relative; width: 168px; height: 168px">
+<svg width="168" height="168" viewBox="0 0 168 168" role="img" aria-label="مستوى الشحنة {{socText}}">
+<circle cx="84" cy="84" r="70" fill="none" stroke="#E5E7EB" stroke-width="14"></circle>
+<circle cx="84" cy="84" r="70" fill="none" stroke="{{ringColor}}" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{dash}}" transform="rotate(-90 84 84)"></circle>
+</svg>
+<div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center"><span style="font-size: 38px; font-weight: 700">{{socText}}</span><span style="font-size: 13px; color: #4B5563">شحنة البطارية</span></div>
+</div>
+<div style="font-size: 14px; color: #4B5563">{{subline}}</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="background: #FFFFFF; border: 1px solid #E2DFD6; border-radius: 14px; padding: 14px"><div style="font-size: 12px; color: #4B5563">الحمل الآن</div><div style="font-size: 22px; font-weight: 700">{{load}}</div></div>
+<div style="background: #FFFFFF; border: 1px solid #E2DFD6; border-radius: 14px; padding: 14px"><div style="font-size: 12px; color: #4B5563">باقتك</div><div style="font-size: 22px; font-weight: 700">8 A</div></div>
+</div>
+
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<button onClick="{{ goPay }}" style="min-height: 52px; border-radius: 14px; border: 0; background: #1B1F23; color: #FFFFFF; font-size: 16px; font-weight: 700">تجديد الاشتراك</button>
+<button onClick="{{ goFreeze }}" style="min-height: 48px; border-radius: 14px; border: 2px solid #1B1F23; background: transparent; color: #1B1F23; font-size: 15px; font-weight: 600">{{freezeLabel}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPay }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 14px; flex: 1">
+<h1 style="margin: 0; font-size: 22px; font-weight: 700">تجديد الاشتراك</h1>
+<div style="background: #FFFFFF; border: 1px solid #E2DFD6; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+<div style="display: flex; justify-content: space-between"><span style="color: #4B5563">الباقة</span><span style="font-weight: 600">8 A</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: #4B5563">المدة</span><span style="font-weight: 600">30 يوماً</span></div>
+<div style="display: flex; justify-content: space-between; border-top: 1px solid #EEECE5; padding-top: 10px"><span style="color: #4B5563">المبلغ (سعر الصيف)</span><span style="font-weight: 700; font-size: 18px">120,000 د.ع</span></div>
+</div>
+<div style="font-size: 13px; color: #4B5563; line-height: 1.7">الدفع عبر بوابة الدفع المحلية [تُحدَّد لاحقاً]. يُفعَّل الاشتراك تلقائياً فور تأكيد الدفع.</div>
+<sc-if value="{{ paid }}" hint-placeholder-val="{{ false }}">
+<div role="status" style="background: #DDF1E4; color: #14532D; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 600">تم الدفع وتفعيل الاشتراك لمدة 30 يوماً.</div>
+</sc-if>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{ notPaid }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ doPay }}" style="min-height: 52px; border-radius: 14px; border: 0; background: #1B1F23; color: #FFFFFF; font-size: 16px; font-weight: 700">ادفع 120,000 د.ع</button>
+</sc-if>
+<button onClick="{{ goHome }}" style="min-height: 48px; border-radius: 14px; border: 2px solid #1B1F23; background: transparent; color: #1B1F23; font-size: 15px; font-weight: 600">رجوع</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFreeze }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 14px; flex: 1">
+<h1 style="margin: 0; font-size: 22px; font-weight: 700">تجميد الاشتراك</h1>
+<div style="font-size: 14px; color: #4B5563; line-height: 1.7">لن تُحتسب مدة اشتراكك خلال التجميد، وتُقطع الكهرباء عن منزلك حتى انتهائه. الحد الأقصى للمدة يحدده المشغل.</div>
+<div style="display: flex; flex-direction: column; gap: 10px" role="group" aria-label="مدة التجميد">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="3">
+<button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="min-height: 52px; border-radius: 14px; font-size: 16px; font-weight: 600; border: 2px solid {{o.border}}; background: {{o.bg}}; color: #1B1F23">{{o.label}}</button>
+</sc-for>
+</div>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<button onClick="{{ doFreeze }}" style="min-height: 52px; border-radius: 14px; border: 0; background: #1B1F23; color: #FFFFFF; font-size: 16px; font-weight: 700">تأكيد التجميد</button>
+<button onClick="{{ goHome }}" style="min-height: 48px; border-radius: 14px; border: 2px solid #1B1F23; background: transparent; color: #1B1F23; font-size: 15px; font-weight: 600">رجوع</button>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"soc":{"editor":"range","default":72,"min":5,"max":100,"step":1,"unit":"%"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { screen: 'home', days: 2, frozen: false, paid: false, pickDays: 7 };
+  }
+  renderVals() {
+    const soc = this.props.soc ?? 72;
+    const s = this.state;
+    const ST = {
+      ACTIVE: { label: 'فعّال', dot: '#1E9E5A', bg: '#DDF1E4', fg: '#14532D' },
+      EXPIRING: { label: 'قارب الانتهاء', dot: '#E08A00', bg: '#FDE9CF', fg: '#7A3E00' },
+      FROZEN: { label: 'مجمّد', dot: '#3B82F6', bg: '#DBEAFE', fg: '#1E3A8A' }
+    };
+    const key = s.frozen ? 'FROZEN' : (s.days <= 3 ? 'EXPIRING' : 'ACTIVE');
+    const circ = 2 * Math.PI * 70;
+    const go = (screen) => () => this.setState({ screen });
+    return {
+      st: ST[key],
+      isHome: s.screen === 'home', isPay: s.screen === 'pay', isFreeze: s.screen === 'freeze',
+      lowSoc: soc <= 40 && !s.frozen,
+      socText: soc + '%',
+      ringColor: soc < 20 ? '#D64033' : (soc < 40 ? '#E08A00' : '#1E9E5A'),
+      dash: (soc / 100 * circ).toFixed(1) + ' ' + circ.toFixed(1),
+      subline: s.frozen ? 'الاشتراك مجمّد — لا تُحتسب المدة' : 'ينتهي اشتراكك بعد ' + s.days + (s.days <= 10 ? ' أيام' : ' يوماً'),
+      load: s.frozen ? '—' : '1.2 kW',
+      freezeLabel: s.frozen ? 'إنهاء التجميد' : 'تجميد الاشتراك',
+      goPay: go('pay'), goHome: go('home'),
+      goFreeze: s.frozen ? () => this.setState({ frozen: false }) : go('freeze'),
+      paid: s.paid, notPaid: !s.paid,
+      doPay: () => this.setState({ paid: true, days: 30, frozen: false }),
+      opts: [7, 14, 30].map((d) => ({
+        label: d + ' يوماً', on: s.pickDays === d,
+        bg: s.pickDays === d ? '#E8EEFF' : '#FFFFFF', border: s.pickDays === d ? '#1D4ED8' : '#D6D3C8',
+        pick: () => this.setState({ pickDays: d })
+      })),
+      doFreeze: () => this.setState({ frozen: true, screen: 'home' })
+    };
+  }
+}
+</script>
+</body>
+</html>
